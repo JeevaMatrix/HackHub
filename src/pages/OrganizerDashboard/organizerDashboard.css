@@ -1,0 +1,94 @@
+.dash-container {
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
+  padding-top: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.create-btn {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #222;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.empty-text {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 18px;
+}
+
+.dash-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dash-card {
+  display: flex;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  gap: 20px;
+  background: white;
+}
+
+.dash-banner {
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.dash-info {
+  flex: 1;
+}
+
+.dash-dates {
+  color: #555;
+  margin: 4px 0;
+}
+
+.dash-count {
+  font-size: 14px;
+  color: #555;
+}
+
+.dash-btns {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.view-btn,
+.edit-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+}
+
+.view-btn {
+  background: #4e4e4e;
+}
+
+.edit-btn {
+  background: #0069ff;
+}
+
+.delete-btn {
+  background: #d00000;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}

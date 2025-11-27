@@ -1,0 +1,40 @@
+.login-container {
+  width: 350px;
+  margin: auto;
+  padding-top: 40px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-form input {
+  padding: 8px;
+  font-size: 14px;
+}
+
+.btn-submit {
+  padding: 10px;
+  background: #222;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+.success {
+  color: green;
+  font-size: 14px;
+}
+
+a {
+  color: blue;
+}

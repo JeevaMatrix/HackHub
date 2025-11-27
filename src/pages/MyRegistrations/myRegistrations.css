@@ -1,0 +1,63 @@
+.reglist-container {
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
+  padding-top: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.empty-text {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 40px;
+}
+
+.reglist {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reg-card {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  gap: 15px;
+  background: white;
+}
+
+.reg-banner {
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.reg-info {
+  flex: 1;
+}
+
+.reg-dates {
+  color: #555;
+  margin: 4px 0;
+}
+
+.reg-status {
+  margin: 4px 0;
+}
+
+.details-btn {
+  display: inline-block;
+  margin-top: 10px;
+  background: #222;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}

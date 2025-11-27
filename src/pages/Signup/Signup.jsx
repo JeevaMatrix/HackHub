@@ -7,10 +7,12 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    phone: "",
     role: "student",
     collegeId: "",
     department: "",
-    year: ""
+    year: "",
+    upiId: "" // Only for organizers
   });
 
   const [error, setError] = useState("");
@@ -30,11 +32,7 @@ const Signup = () => {
     try {
       await signup(form);
       setSuccess("Signup successful! Redirecting...");
-
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 1000);
-
+      setTimeout(() => (window.location.href = "/login"), 1000);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Signup failed");
@@ -62,11 +60,34 @@ const Signup = () => {
           required
         />
 
+        <label>Phone Number</label>
+        <input
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          placeholder="10-digit number"
+          required
+        />
+
         <label>Role</label>
         <select name="role" value={form.role} onChange={handleChange}>
           <option value="student">Student</option>
           <option value="organizer">Organizer</option>
         </select>
+
+        {/* Only show UPI field if organizer */}
+        {form.role === "organizer" && (
+          <>
+            <label>Organizer UPI ID</label>
+            <input
+              name="upiId"
+              value={form.upiId}
+              onChange={handleChange}
+              placeholder="example@upi"
+              required
+            />
+          </>
+        )}
 
         <label>College ID</label>
         <input name="collegeId" value={form.collegeId} onChange={handleChange} />

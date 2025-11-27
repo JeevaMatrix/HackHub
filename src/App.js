@@ -15,6 +15,7 @@ import Terms from "./pages/Terms/Terms";
 import Refunds from "./pages/Refunds/Refunds";
 import Shipping from "./pages/Shipping/Shipping";
 import About from "./pages/About/About";
+import PaymentSuccess from './pages/PaymentSuccess/PaymentSuccess.jsx';
 
 function App() {
   return (
@@ -33,6 +34,9 @@ function App() {
 
           {/* register event page */}
           <Route path="/register/:id" element={<RegisterEvent />} />
+          {/* payment success page */}
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+
 
           {/* Home Page */}
           <Route path="/" element={<Home/>} />

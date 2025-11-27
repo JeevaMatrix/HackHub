@@ -4,9 +4,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import eventApi from "../../api/eventApi";
 import registrationApi from "../../api/registrationApi";
+import paymentApi from "../../api/paymentApi";
+// import { Cashfree } from "cashfree-dropjs";
 
 const RegisterEvent = () => {
-  const { id } = useParams();          // event ID from URL
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -15,15 +17,13 @@ const RegisterEvent = () => {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
-  console.log("Current user outside useeffect:", user);
-
-  // Redirect to login if not logged in
+  // Redirect if not logged in
   useEffect(() => {
-    console.log("Current user:", user);
     if (!loading && !user) {
       navigate("/login");
     }
-  }, [user, navigate, loading]);
+    // eslint-disable-next-line
+  }, [user, navigate]);
 
   // Fetch event details
   useEffect(() => {
@@ -42,8 +42,8 @@ const RegisterEvent = () => {
     loadEvent();
   }, [id]);
 
-  // Registration handler
-  const handleRegister = async () => {
+  // FREE registration logic
+  const handleFreeRegistration = async () => {
     setProcessing(true);
     setError("");
 
@@ -58,6 +58,37 @@ const RegisterEvent = () => {
     }
   };
 
+  // PAID registration logic
+  const handlePaidRegistration = async () => {
+    setProcessing(true);
+    setError("");
+
+    try {
+      // Create order on backend
+      const res = await paymentApi.createOrder({ eventId: id });
+      const sessionId = res.data.payment_session_id;
+
+      // Initialize Cashfree SDK (NO "new")
+      const cashfree = window.Cashfree({ mode: "sandbox" });
+
+      // Open payment gateway
+      cashfree.checkout({
+        paymentSessionId: sessionId,
+        redirectTarget: "_self"
+      });
+
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Payment initiation failed");
+      setProcessing(false);
+    }
+  };
+
+  const handleRegister = () => {
+    if (event.pricing.isPaid) handlePaidRegistration();
+    else handleFreeRegistration();
+  };
+
   if (loading) return <p className="loading">Loading...</p>;
   if (!event) return <p className="error-msg">Event not found</p>;
 
@@ -66,10 +97,10 @@ const RegisterEvent = () => {
 
   return (
     <div className="reg-container">
-
       <h1>Register for {event.title}</h1>
+
       <p className="reg-dates">
-        {new Date(event.date.start).toLocaleString()} - 
+        {new Date(event.date.start).toLocaleString()} –{" "}
         {new Date(event.date.end).toLocaleString()}
       </p>
 

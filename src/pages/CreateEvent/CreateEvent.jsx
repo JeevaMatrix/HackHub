@@ -82,7 +82,7 @@ const CreateEvent = () => {
         registrationLimit: form.registrationLimit,
       };
 
-      const res = await eventApi.createEvent(payload);
+      await eventApi.createEvent(payload);
 
       setSuccess("Event created successfully!");
       setTimeout(() => navigate("/dashboard"), 1200);

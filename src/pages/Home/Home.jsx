@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import "./home.css";
 import eventApi from "../../api/eventApi";
 import EventCard from "../../components/EventCard/EventCard";
-import { useAuth } from "../../context/AuthContext";
 
 const Home = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
 
   useEffect(() => {
     const loadEvents = async () => {

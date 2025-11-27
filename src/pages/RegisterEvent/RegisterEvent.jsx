@@ -23,7 +23,7 @@ const RegisterEvent = () => {
     if (!loading && !user) {
       navigate("/login");
     }
-  }, [user, navigate]);
+  }, [user, navigate, loading]);
 
   // Fetch event details
   useEffect(() => {
@@ -48,7 +48,7 @@ const RegisterEvent = () => {
     setError("");
 
     try {
-      const res = await registrationApi.register(id);
+      await registrationApi.register(id);
       navigate("/my-registrations");
     } catch (err) {
       console.error(err);

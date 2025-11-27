@@ -7,7 +7,6 @@ const eventApi = {
   updateEvent: (id, data) => axiosClient.put(`/event/${id}`, data),
   deleteEvent: (id) => axiosClient.delete(`/event/${id}`),
   getOrganizerEvents: () => axiosClient.get("/event/my-events"),
-  deleteEvent: (id) => axiosClient.delete(`/events/${id}`)
 };
 
 export default eventApi;

@@ -106,13 +106,16 @@ const EventDetails = () => {
       <p className="event-description">{event.description}</p>
 
       {/* Brochure */}
+      {/* 🔽 DOWNLOAD BROCHURE BUTTON */}
       {event.brochureUrl && (
         <div className="brochure-section">
           <a
-            href={`/event/${event._id}/brochure/download`}
+            href={`${event.brochureUrl}?fl_attachment=${event.title.replace(/\s+/g, "_")}.pdf`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="download-btn"
           >
-            📄 Download Brochure (PDF)
+            📄 Get Brochure (PDF)
           </a>
         </div>
       )}

@@ -31,11 +31,54 @@ const EventDetails = () => {
 
   const now = new Date();
   const isEnded = new Date(event.date.end) < now;
-  const isOrganizer = user && event.organizerId === user.id;
+  const isOrganizer = user && event.organizerId === user._id;
 
   const handleRegister = () => {
     if (!user) return (window.location.href = "/login");
     window.location.href = `/register/${event._id}`;
+  };
+
+  // CSV Download Function
+  const handleCSVDownload = async () => {
+    try {
+      const res = await eventApi.downloadRegistrationsCSV(event._id);
+
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = `${event.title.replace(/\s+/g, "_")}_registrations.csv`;
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("CSV Download Error:", err);
+    }
+  };
+
+  // Share Function
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: event.title,
+          text: "Check out this event!",
+          url: shareUrl
+        });
+      } catch (err) {
+        console.error("Share failed:", err);
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Event link copied to clipboard!");
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+    }
   };
 
   return (
@@ -62,10 +105,37 @@ const EventDetails = () => {
 
       <p className="event-description">{event.description}</p>
 
+      {/* Brochure */}
+      {event.brochureUrl && (
+        <div className="brochure-section">
+          <a
+            href={`/event/${event._id}/brochure/download`}
+            className="download-btn"
+          >
+            📄 Download Brochure (PDF)
+          </a>
+        </div>
+      )}
+
+      {/* CSV Download */}
+      {isOrganizer && (
+        <button onClick={handleCSVDownload} className="download-btn">
+          📥 Download Registrations (CSV)
+        </button>
+      )}
+
+      {/* Share */}
+      <button onClick={handleShare} className="share-btn">
+        🔗 Share Event
+      </button>
+
+      {/* Register */}
       <div className="action-section">
-        {/* If organizer */}
         {isOrganizer ? (
-          <p className="info-text">You are the organizer of this event.</p>
+          <div>
+            <p className="info-text">You are the organizer of this event.</p>
+            <p>Students count: {event.registeredCount}</p>
+          </div>
         ) : (
           <button
             className="register-btn"

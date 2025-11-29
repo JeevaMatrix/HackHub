@@ -24,6 +24,7 @@ const EditEvent = () => {
     title: "",
     description: "",
     bannerUrl: "",
+    brochureUrl: "",
     type: "hackathon",
     visibility: "public",
     allowedCollegeIds: [],
@@ -39,6 +40,10 @@ const EditEvent = () => {
     registrationLimit: 0,
   });
 
+  // NEW: Local states for file uploads
+  const [newBannerFile, setNewBannerFile] = useState(null);
+  const [newBrochureFile, setNewBrochureFile] = useState(null);
+
   // Load event data
   useEffect(() => {
     const loadEvent = async () => {
@@ -50,6 +55,7 @@ const EditEvent = () => {
           title: event.title,
           description: event.description || "",
           bannerUrl: event.bannerUrl || "",
+          brochureUrl: event.brochureUrl || "",
           type: event.type,
           visibility: event.visibility,
           allowedCollegeIds: event.allowedCollegeIds || [],
@@ -85,46 +91,51 @@ const EditEvent = () => {
     setForm({ ...form, [e.target.name]: e.target.checked });
   };
 
+  // -------------------------------
+  // 🔥 UPDATE EVENT FUNCTION (FORMDATA)
+  // -------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
     try {
-      const payload = {
-        title: form.title,
-        description: form.description,
-        bannerUrl: form.bannerUrl,
-        type: form.type,
-        visibility: form.visibility,
-        allowedCollegeIds:
-          form.visibility === "private" ? form.allowedCollegeIds : [],
+      const formData = new FormData();
 
-        date: {
-          start: form.startDate,
-          end: form.endDate,
-        },
+      // Add text fields
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("type", form.type);
+      formData.append("visibility", form.visibility);
 
-        venue: form.venue,
+      if (form.visibility === "private") {
+        form.allowedCollegeIds.forEach((id) =>
+          formData.append("allowedCollegeIds[]", id)
+        );
+      }
 
-        pricing: {
-          isPaid: form.isPaid,
-          amount: form.isPaid ? form.amount : 0,
-          currency: form.currency,
-          earlyBird: {
-            enabled: form.earlyBirdEnabled,
-            amount: form.earlyBirdAmount,
-            endDate: form.earlyBirdEnd || null,
-          },
-        },
+      formData.append("date[start]", form.startDate);
+      formData.append("date[end]", form.endDate);
+      formData.append("venue", form.venue);
 
-        registrationLimit: form.registrationLimit,
-      };
+      formData.append("pricing[isPaid]", form.isPaid);
+      formData.append("pricing[amount]", form.amount);
+      formData.append("pricing[currency]", form.currency);
 
-      await eventApi.updateEvent(id, payload);
+      formData.append("pricing[earlyBird][enabled]", form.earlyBirdEnabled);
+      formData.append("pricing[earlyBird][amount]", form.earlyBirdAmount);
+      formData.append("pricing[earlyBird][endDate]", form.earlyBirdEnd);
+
+      formData.append("registrationLimit", form.registrationLimit);
+
+      // Add NEW uploaded files ONLY if changed
+      if (newBannerFile) formData.append("banner", newBannerFile);
+      if (newBrochureFile) formData.append("brochure", newBrochureFile);
+
+      // Send to backend
+      await eventApi.updateEventFormData(id, formData);
 
       setSuccess("Event updated successfully!");
-
       setTimeout(() => navigate(`/events/${id}`), 1200);
 
     } catch (err) {
@@ -142,6 +153,7 @@ const EditEvent = () => {
 
       <form className="create-form" onSubmit={handleSubmit}>
 
+        {/* Title */}
         <label>Event Title</label>
         <input
           name="title"
@@ -150,6 +162,7 @@ const EditEvent = () => {
           required
         />
 
+        {/* Description */}
         <label>Description</label>
         <textarea
           name="description"
@@ -157,13 +170,45 @@ const EditEvent = () => {
           onChange={handleChange}
         ></textarea>
 
-        <label>Banner Image URL</label>
+        {/* Existing Banner Preview */}
+        {form.bannerUrl && (
+          <>
+            <label>Existing Banner</label>
+            <img src={form.bannerUrl} alt="banner" className="preview-img" />
+          </>
+        )}
+
+        {/* New Banner Upload */}
+        <label>Upload New Banner Image</label>
         <input
-          name="bannerUrl"
-          value={form.bannerUrl}
-          onChange={handleChange}
+          type="file"
+          accept="image/*"
+          onChange={(e) => setNewBannerFile(e.target.files[0])}
         />
 
+        {/* Existing Brochure */}
+        {form.brochureUrl && (
+          <>
+            <label>Current Brochure</label>
+            <a 
+              href={form.brochureUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Download Current Brochure
+            </a>
+          </>
+        )}
+
+        {/* New Brochure Upload */}
+        <label>Upload New Brochure (PDF)</label>
+        <input
+          type="file"
+          accept="application/pdf"
+          onChange={(e) => setNewBrochureFile(e.target.files[0])}
+        />
+
+        {/* Event Type */}
         <label>Event Type</label>
         <select name="type" value={form.type} onChange={handleChange}>
           <option value="hackathon">Hackathon</option>
@@ -171,6 +216,7 @@ const EditEvent = () => {
           <option value="contest">Contest</option>
         </select>
 
+        {/* Visibility */}
         <label>Visibility</label>
         <select name="visibility" value={form.visibility} onChange={handleChange}>
           <option value="public">Public</option>
@@ -193,6 +239,7 @@ const EditEvent = () => {
           </>
         )}
 
+        {/* Dates */}
         <label>Start Date</label>
         <input
           type="datetime-local"
@@ -211,10 +258,11 @@ const EditEvent = () => {
           required
         />
 
+        {/* Venue */}
         <label>Venue</label>
         <input name="venue" value={form.venue} onChange={handleChange} />
 
-        {/* Pricing Section */}
+        {/* Pricing */}
         <label>
           <input
             type="checkbox"
@@ -242,7 +290,6 @@ const EditEvent = () => {
               onChange={handleChange}
             >
               <option value="INR">INR</option>
-              <option value="USD">USD</option>
             </select>
 
             <label>
@@ -277,6 +324,7 @@ const EditEvent = () => {
           </>
         )}
 
+        {/* Registration Limit */}
         <label>Registration Limit</label>
         <input
           type="number"
@@ -285,6 +333,7 @@ const EditEvent = () => {
           onChange={handleChange}
         />
 
+        {/* Messages */}
         {error && <p className="error-msg">{error}</p>}
         {success && <p className="success-msg">{success}</p>}
 

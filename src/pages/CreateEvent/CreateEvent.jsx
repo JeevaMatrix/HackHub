@@ -15,11 +15,9 @@ const CreateEvent = () => {
     }
   }, [loading, user, navigate]);
 
-
   const [form, setForm] = useState({
     title: "",
     description: "",
-    bannerUrl: "",
     type: "hackathon",
     visibility: "public",
     allowedCollegeIds: [],
@@ -34,6 +32,9 @@ const CreateEvent = () => {
     earlyBirdEnd: "",
     registrationLimit: 0,
   });
+
+  const [bannerFile, setBannerFile] = useState(null);
+  const [brochureFile, setBrochureFile] = useState(null);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -52,37 +53,42 @@ const CreateEvent = () => {
     setSuccess("");
 
     try {
-      const payload = {
-        title: form.title,
-        description: form.description,
-        bannerUrl: form.bannerUrl,
-        type: form.type,
-        visibility: form.visibility,
-        allowedCollegeIds:
-          form.visibility === "private" ? form.allowedCollegeIds : [],
+      const formData = new FormData();
 
-        date: {
-          start: form.startDate,
-          end: form.endDate,
-        },
+      // Text fields
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("type", form.type);
+      formData.append("visibility", form.visibility);
 
-        venue: form.venue,
+      if (form.visibility === "private") {
+        form.allowedCollegeIds.forEach((id) =>
+          formData.append("allowedCollegeIds[]", id)
+        );
+      }
 
-        pricing: {
-          isPaid: form.isPaid,
-          amount: form.isPaid ? form.amount : 0,
-          currency: form.currency,
-          earlyBird: {
-            enabled: form.earlyBirdEnabled,
-            amount: form.earlyBirdAmount,
-            endDate: form.earlyBirdEnd || null,
-          },
-        },
+      formData.append("date[start]", form.startDate);
+      formData.append("date[end]", form.endDate);
+      formData.append("venue", form.venue);
 
-        registrationLimit: form.registrationLimit,
-      };
+      formData.append("pricing[isPaid]", form.isPaid);
+      formData.append("pricing[amount]", form.amount);
+      formData.append("pricing[currency]", form.currency);
 
-      await eventApi.createEvent(payload);
+      formData.append("pricing[earlyBird][enabled]", form.earlyBirdEnabled);
+      formData.append("pricing[earlyBird][amount]", form.earlyBirdAmount);
+      formData.append("pricing[earlyBird][endDate]", form.earlyBirdEnd);
+
+      formData.append("registrationLimit", form.registrationLimit);
+
+      // Files
+      if (bannerFile) formData.append("banner", bannerFile);
+      if (brochureFile) formData.append("brochure", brochureFile);
+
+      // API request
+      await eventApi.createEvent(formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       setSuccess("Event created successfully!");
       setTimeout(() => navigate("/dashboard"), 1200);
@@ -118,12 +124,20 @@ const CreateEvent = () => {
           onChange={handleChange}
         ></textarea>
 
-        {/* Banner */}
-        <label>Banner Image URL</label>
+        {/* Banner Upload */}
+        <label>Upload Banner Image</label>
         <input
-          name="bannerUrl"
-          value={form.bannerUrl}
-          onChange={handleChange}
+          type="file"
+          accept="image/*"
+          onChange={(e) => setBannerFile(e.target.files[0])}
+        />
+
+        {/* Brochure Upload */}
+        <label>Upload Brochure (PDF)</label>
+        <input
+          type="file"
+          accept="application/pdf"
+          onChange={(e) => setBrochureFile(e.target.files[0])}
         />
 
         {/* Event Type */}
@@ -141,7 +155,7 @@ const CreateEvent = () => {
           <option value="private">Private</option>
         </select>
 
-        {/* Allowed Colleges (for private events) */}
+        {/* Allowed Colleges */}
         {form.visibility === "private" && (
           <>
             <label>Allowed Colleges (IDs comma-separated)</label>
@@ -151,7 +165,9 @@ const CreateEvent = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  allowedCollegeIds: e.target.value.split(",").map((v) => v.trim()),
+                  allowedCollegeIds: e.target.value
+                    .split(",")
+                    .map((v) => v.trim()),
                 })
               }
             />
@@ -213,7 +229,6 @@ const CreateEvent = () => {
               onChange={handleChange}
             >
               <option value="INR">INR</option>
-              <option value="USD">USD</option>
             </select>
 
             <label>
@@ -257,7 +272,7 @@ const CreateEvent = () => {
           onChange={handleChange}
         />
 
-        {/* Messages */}
+        {/* Feedback */}
         {error && <p className="error-msg">{error}</p>}
         {success && <p className="success-msg">{success}</p>}
 

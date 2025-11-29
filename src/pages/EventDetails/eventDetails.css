@@ -1,74 +1,170 @@
+/* Container */
 .event-details-container {
-  width: 90%;
-  max-width: 800px;
-  margin: auto;
-  padding: 20px 0;
+  width: 92%;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  animation: fadeIn 0.3s ease;
 }
 
+/* Fade-in Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Banner */
 .event-banner {
   width: 100%;
-  height: 240px;
+  height: 260px;
   object-fit: cover;
   border-radius: 12px;
   margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
+/* Title */
 .event-title {
-  font-size: 32px;
-  margin-bottom: 6px;
+  font-size: 35px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1d1d1d;
 }
 
+/* Tag */
 .event-type-tag {
   display: inline-block;
-  padding: 4px 10px;
-  background: #f5f5f5;
+  padding: 6px 14px;
+  background: #eef2ff;
+  color: #3344cc;
   border-radius: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-weight: 500;
 }
 
+/* Dates, Venue, Price, Description */
 .event-dates,
 .event-venue,
 .event-price,
 .event-description {
-  margin: 6px 0;
-  font-size: 16px;
+  margin: 8px 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #444;
 }
 
+/* Price */
 .event-price {
   font-weight: bold;
   color: #d40000;
+  font-size: 18px;
 }
 
 .event-price.free {
   color: #009d1a;
 }
 
-.action-section {
+/* Brochure + CSV + Share Section */
+.brochure-section,
+.csv-section {
   margin-top: 20px;
 }
 
+/* Buttons Reusable */
+.download-btn,
+.share-btn,
 .register-btn {
-  padding: 10px 20px;
-  background: #222;
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
   color: white;
-  border: none;
-  border-radius: 6px;
   cursor: pointer;
+  margin: 8px 6px 0 0;
+  transition: all 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* Download Buttons */
+.download-btn {
+  background: #0055ff;
+  border: none;
+}
+
+.download-btn:hover {
+  background: #003fcc;
+}
+
+/* Share Button */
+.share-btn {
+  background: #22bb33;
+  border: none;
+}
+
+.share-btn:hover {
+  background: #1c9d2a;
+}
+
+/* Register Button */
+.register-btn {
+  background: #222;
+  border: none;
+}
+
+.register-btn:hover {
+  background: #000;
 }
 
 .register-btn:disabled {
-  background: #aaa;
-  cursor: not-allowed;
+  background: #888;
 }
 
+/* Organizer Info */
 .info-text {
-  font-size: 14px;
-  color: #777;
-  margin-top: 10px;
+  font-size: 15px;
+  color: #666;
+  margin-top: 12px;
 }
 
+/* Students Count Box */
+.students-count {
+  background: #f8f9ff;
+  padding: 6px 12px;
+  border-left: 4px solid #4d6bfe;
+  margin-top: 12px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Action Section */
+.action-section {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+/* Error Messages */
 .error-msg {
   text-align: center;
   margin-top: 40px;
   font-size: 20px;
+  color: #d40000;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .event-title {
+    font-size: 28px;
+  }
+  .event-banner {
+    height: 200px;
+  }
+  .download-btn, .share-btn, .register-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
 }
